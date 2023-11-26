@@ -1,4 +1,4 @@
-host
+//host
 
 const { host } = new URL(window.location.href);
 
