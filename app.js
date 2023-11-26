@@ -3,6 +3,8 @@ const path = require('path');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 
+const database = require('./utils/database');
+
 const app = express();
 
 
@@ -14,5 +16,5 @@ app.use('/', (req, res, next) => {
 });
 
 
-
+database.sync();
 app.listen(process.env.PORT || 4000);
