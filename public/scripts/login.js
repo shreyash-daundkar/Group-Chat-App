@@ -23,8 +23,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
         try {
             const response = await axios.post(`http://${host}/user/login`, loginData);
-            const { success } = response.data;
+            const { token, success } = response.data;
             if (success) {
+                localStorage.setItem('token', token);
                 //window.location.href = '';
             } else {
                 showAlert('Something went wrong. Please try again.', 'danger');

@@ -1,5 +1,6 @@
-const { hashPassword, comparePassword } = require("../services/bcrypt");
 const { getUsers, addUser } = require("../services/user");
+const { hashPassword, comparePassword } = require("../services/bcrypt");
+const { signToken } = require('../services/jwt');
 
 exports.addUser = async (req, res, next) => {
     try {
@@ -29,10 +30,10 @@ exports.verifyUser = async (req, res, next) => {
         if (users.length !== 0) {
 
             const isPasswordCorrect =await comparePassword(password, users[0].password);
-            if (isPasswordCorrect) {
-
-                return res.status(201).json({ success: true });
+            if ( isPasswordCorrect ) {
                 
+                const token = signToken({ email });
+                return res.status(200).json({ token, success: true });
             } else {
                 return res.status(400).json({ message: "Password is incorrect", success: false });
             }  
