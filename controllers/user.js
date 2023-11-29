@@ -6,7 +6,10 @@ exports.addUser = async (req, res, next) => {
     try {
         const user = req.body;
 
-        const users = await getUsers({where: {email: user.email}});
+        const users = await getUsers({
+            where: { email: user.email }
+        });
+        
         if (users.length !== 0) {
             return res.status(400).json({ message: "Email already exists", success: false });
         }
@@ -30,19 +33,16 @@ exports.verifyUser = async (req, res, next) => {
         if (users.length !== 0) {
 
             const isPasswordCorrect =await comparePassword(password, users[0].password);
-            if ( isPasswordCorrect ) {
+            if ( isPasswordCorrect ) {  
                 
-                const token = signToken({ email });
+                const token = signToken({ id: users[0].id });
                 return res.status(200).json({ token, success: true });
             } else {
                 return res.status(401).json({ message: "Password is incorrect", success: false });
             }  
-
         } else {
             return res.status(400).json({ message: "Email does not exists", success: false });
-        }
-
-        
+        }    
     } catch (error) {
         next(error);
     }

@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 
 exports.signToken = obj => {
     try {
-        const token = jwt.sign(obj, process.env.JWT_SECRET, { expiresIn: '10s'});
+        const token = jwt.sign(obj, process.env.JWT_SECRET, { expiresIn: '3600s'});
         return token;
     } catch (error) {
         console.error(error.stack);
