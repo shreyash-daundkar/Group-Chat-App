@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const { token, success } = response.data;
             if (success) {
                 document.cookie = `token=${token}`;
-                //window.location.href = '';
+                window.location.href = 'chat.html';
             } else {
                 showAlert('Something went wrong. Please try again.', 'danger');
             }
