@@ -1,12 +1,19 @@
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
-require('dotenv').config();
 const cors = require('cors');
+
+require('dotenv').config();
 
 const database = require('./utils/database');
 
+const User = require('./models/user');
+const Chat = require('./models/chat');
+
+const { userAuth } = require('./middlewares/userAuthentication');
+
 const userRoutes = require('./routes/user');
+const chatRoutes = require('./routes/chat');
 
 
 
@@ -14,25 +21,25 @@ const app = express();
 
 
 
-app.use(cors({
-  origin: 'http://127.0.0.1:5500'
-}));
+app.use( cors({ origin: 'http://127.0.0.1:5500' }) );
 
 app.use(bodyParser.json());
 
 
 app.use('/user', userRoutes);
 
-
-// app.use('/', (req, res, next) => {
-//     res.sendFile(path.join(__dirname , 'public' + req.url))
-// });
+app.use('/chat', userAuth, chatRoutes);
 
 
 app.use((error, req, res, next) => {
     console.error(error.stack);
     res.status(500).json({ message: 'Something went wrong!', success: false });
-  });
+});
+
+
+
+User.hasMany(Chat);
+Chat.belongsTo(User);
 
 
 
