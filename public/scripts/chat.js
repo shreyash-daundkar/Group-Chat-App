@@ -17,55 +17,30 @@ function getCookie(name) {
   }
   
 const token = getCookie('token');
-console.log(token)
 axios.defaults.headers.common['authorization'] = token;
 
 
 
 // get chats
 
-axios.get(host+ '/chat').then(response => console.log(response));
-//console.log(chats);
-
-const chats = [
-    {
-        id: 1,
-        userId: 1,
-        username: 'ram',
-        message: 'Hi'
-    },
-    {
-        id: 2,
-        userId: 2,
-        username: 'sham',
-        message: 'Hello'
-    },
-]
-
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', async () => {
+    const { data: { data }} = await axios.get(host+ '/chat');
     chatBox.innerHTML = '';
-    chats.forEach(chat => addChat(chat));
+    data.forEach(chat => addChat(chat));
 });
 
-function addChat(chat) {
-    const { username , message } = chat;
-    const div = document.createElement('div');
-    div.classList.add('message');
-    div.innerHTML = `<p><strong>${username}: </strong>${message}</p>`
-    chatBox.append(div);
-}
 
-console.log(sendChatBtn, chatInput)
+//send chat 
+
 sendChatBtn.addEventListener('click', async e => {
     e.preventDefault();
     const message = chatInput.value;
     if(message) {
+        console.log(message)
         try {
-            //const res = await axios.post(host + '/chat', { message });
-            const res = { success: true };
-            if(res.success) {
-                console.log(message)
-                addChat({ username: 'You', message });
+            const res = await axios.post(host + '/chat', { message });
+            if(res.data.success) {
+                addChat({ username: 'You', message, isCurrUser: true });
             }
         } catch (error) {
             console.log(error.response.data.message);
@@ -73,3 +48,18 @@ sendChatBtn.addEventListener('click', async e => {
     }
 });
 
+// utility 
+
+function addChat(chat) {
+    let { username , message, isCurrUser } = chat;
+    const div = document.createElement('div');
+    div.classList.add('message');
+    if(isCurrUser) {
+        username = 'You';
+        div.classList.add('user2');
+    } else {
+        div.classList.add('user1');
+    }
+    div.innerHTML = `<p><strong>${username}: </strong>${message}</p>`
+    chatBox.append(div);
+}
