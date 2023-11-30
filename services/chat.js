@@ -11,6 +11,8 @@ exports.getChats = async options => {
                     attributes: ['id', 'username'],
                 },
             ],
+            order: [['createdAt', 'DESC']],
+            limit: 10,
         });
 
         return chats;
