@@ -1,18 +1,15 @@
-const { getChats, addChat } = require('../services/chat');
+const { getLatestChats, addChat } = require('../services/chat');
 
 
 exports.getChats = async (req, res, next) => {
     try {
-        const { lastMsgId } = req.query;
+        const lastMsgId  = parseInt(req.query.lastMsgId);
 
-        let chats = await getChats();
-
-        if (lastMsgId) {
-            chats = chats.filter(chat => chat.id > lastMsgId)
-        }
-       
+        let chats = await getLatestChats({ limit: 10 });
         
-        let chatsData;
+        chats = chats.filter(chat => chat.id > lastMsgId)
+        
+        let chatsData = [];
         if(chats.length !== 0) {
             
             chatsData = chats.map(chat => {

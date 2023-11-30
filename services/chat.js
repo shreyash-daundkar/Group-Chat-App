@@ -1,9 +1,10 @@
 const Chat = require('../models/chat');
 const User = require('../models/user');
 
-exports.getChats = async options => {
+exports.getLatestChats = async options => {
     try {
-
+        const { limit } = options;
+        
         const chats = await Chat.findAll({
             include: [
                 {
@@ -12,15 +13,15 @@ exports.getChats = async options => {
                 },
             ],
             order: [['createdAt', 'DESC']],
-            limit: 10,
+            limit: limit,
         });
 
-        return chats;
+        return chats.reverse();
     } catch (error) {
         console.error(error.stack);
         throw error;
     }
-}
+};
 
 exports.addChat = async chat => {
     try {
