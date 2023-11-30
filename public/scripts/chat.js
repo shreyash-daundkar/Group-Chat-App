@@ -23,11 +23,14 @@ axios.defaults.headers.common['authorization'] = token;
 
 // get chats
 
-window.addEventListener('DOMContentLoaded', async () => {
-    const { data: { data }} = await axios.get(host+ '/chat');
-    chatBox.innerHTML = '';
-    data.forEach(chat => addChat(chat));
-});
+window.addEventListener('DOMContentLoaded', loadChats);
+async function loadChats() {
+    setInterval(async () => {
+        const { data: { data }} = await axios.get(host+ '/chat');
+        chatBox.innerHTML = '';
+        data.forEach(chat => addChat(chat));
+    }, 1000);
+}
 
 
 //send chat 
@@ -36,7 +39,6 @@ sendChatBtn.addEventListener('click', async e => {
     e.preventDefault();
     const message = chatInput.value;
     if(message) {
-        console.log(message)
         try {
             const res = await axios.post(host + '/chat', { message });
             if(res.data.success) {
