@@ -21,17 +21,33 @@ axios.defaults.headers.common['authorization'] = token;
 
 
 
-// get chats
+//get chats
 
 window.addEventListener('DOMContentLoaded', loadChats);
-async function loadChats() {
+async function loadChats() { 
+    
+    let lastMsgId = 0;
+    localStorage.setItem('global-chats', JSON.stringify([]));
     setInterval(async () => {
-        const { data: { data }} = await axios.get(host+ '/chat');
+        const { data: { data }} = await axios.get(host+ `/chat?lastMsgId=${lastMsgId}`);
+        storeToLocalStorage(data);
+        const chats = JSON.parse(localStorage.getItem('global-chats'));
+        lastMsgId = chats[ chats.length - 1 ].id;
         chatBox.innerHTML = '';
-        data.forEach(chat => addChat(chat));
+        chats.forEach(chat => addChat(chat));
     }, 1000);
 }
 
+function storeToLocalStorage(data) {
+    const chats = JSON.parse(localStorage.getItem('global-chats'));
+    while(data.length !== 0) {
+        if(chats.length >= 10) chats.shift();
+        chats.push(data.shift());
+    }
+    localStorage.setItem('global-chats', JSON.stringify(chats));
+}
+
+ 
 
 //send chat 
 
