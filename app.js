@@ -9,11 +9,15 @@ const database = require('./utils/database');
 
 const User = require('./models/user');
 const Chat = require('./models/chat');
+const  Group = require('./models/group');
+const  GroupMember = require('./models/groupMember');
 
 const { userAuth } = require('./middlewares/userAuthentication');
 
 const userRoutes = require('./routes/user');
 const chatRoutes = require('./routes/chat');
+const groupRouter = require('./routes/group');
+
 
 
 
@@ -30,6 +34,8 @@ app.use('/user', userRoutes);
 
 app.use('/chat', userAuth, chatRoutes);
 
+app.use('/group', userAuth, groupRouter);
+
 
 app.use((error, req, res, next) => {
     console.error(error.stack);
@@ -40,6 +46,15 @@ app.use((error, req, res, next) => {
 
 User.hasMany(Chat);
 Chat.belongsTo(User);
+
+User.belongsToMany(Group, { through: GroupMember });
+Group.belongsToMany(User, { through: GroupMember });
+
+GroupMember.belongsTo(Group, {constraints : true, onDelete : 'CASCADE'});
+GroupMember.belongsTo(User , {constraints : true, onDelete : 'CASCADE'});
+
+Group.hasMany(Chat);
+Chat.belongsTo(Group);
 
 
 
