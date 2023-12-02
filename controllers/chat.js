@@ -3,9 +3,10 @@ const { getLatestChats, addChat } = require('../services/chat');
 
 exports.getChats = async (req, res, next) => {
     try {
+        const groupId = parseInt(req.query.groupId);
         const lastMsgId  = parseInt(req.query.lastMsgId);
 
-        let chats = await getLatestChats({ limit: 10 });
+        let chats = await getLatestChats({ groupId, limit: 10 });
         
         chats = chats.filter(chat => chat.id > lastMsgId)
         
@@ -32,9 +33,10 @@ exports.getChats = async (req, res, next) => {
 exports.addChat = async (req, res, next) => {
     try {
         const { message } = req.body;
+        const groupId = parseInt(req.query.groupId);
 
         if( message ) {
-            const chat = await addChat({ message, userId: req.user.id});
+            const chat = await addChat({ message, userId: req.user.id, groupId});
             res.status(200).json({ data: chat, success: true });
 
         } else {
