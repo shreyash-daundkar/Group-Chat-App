@@ -1,12 +1,17 @@
 const Chat = require('../models/chat');
 const User = require('../models/user');
+const Group = require('../models/group');
 
 exports.getLatestChats = async options => {
     try {
-        const { limit } = options;
+        const { groupId, limit } = options;
         
         const chats = await Chat.findAll({
             include: [
+                {
+                    model: Group,
+                    where: { id: groupId },
+                },
                 {
                     model: User,
                     attributes: ['id', 'username'],
