@@ -71,13 +71,19 @@
       width: 100%;
       z-index: 1000;
     }
+
+    #userList {
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
   </style>
 </head>
 <body>
 
 <div class="container-fluid chat-container">
   <div class="row h-100">
-    <div class="col-md-2 menu-section">
+    <div class="col-md-1. menu-section">
       <h3>Chat App</h3>
       <ul class="nav flex-column">
         <li class="nav-item">
@@ -86,9 +92,28 @@
         <li class="nav-item">
           <a class="nav-link" href="#">Logout</a>
         </li>
+        <li>
+        </li>
       </ul>
     </div>
-
+  
+    <div class="col-md-3 group-section">
+      <div class="row">
+        <div class="col">
+          <h4>Groups</h4>
+        </div>
+        <div class="col">
+          <button type="button" class="btn btn-primary" id="showCreateGroupModalBtn">Create Group</button>  
+        </div>
+      </div>
+      <br>
+        <ul id="group-list" class="list-group">
+          <li class="list-group-item">Group 1</li>
+          <li class="list-group-item">Group 2</li>
+          <li class="list-group-item">Group 3</li>
+        </ul>
+    </div>
+    
     <div class="col-md-6 chat-section">
       <h4>Global Chat</h4>
       <div class="chat-box">
