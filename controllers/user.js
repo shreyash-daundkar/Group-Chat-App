@@ -36,6 +36,7 @@ exports.verifyUser = async (req, res, next) => {
             if ( isPasswordCorrect ) {  
                 
                 const token = signToken({ id: users[0].id });
+
                 return res.status(200).json({ token, success: true });
             } else {
                 return res.status(401).json({ message: "Password is incorrect", success: false });
@@ -43,6 +44,20 @@ exports.verifyUser = async (req, res, next) => {
         } else {
             return res.status(400).json({ message: "Email does not exists", success: false });
         }    
+    } catch (error) {
+        next(error);
+    }
+}
+
+
+exports.getUsers = async (req, res, next) => {
+    try {
+        const users = await getUsers();
+
+        const data = users.filter(user => user.id !== req.user.id);
+
+        res.status(200).json({ data, success: true});
+
     } catch (error) {
         next(error);
     }
