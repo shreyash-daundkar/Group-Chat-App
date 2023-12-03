@@ -12,7 +12,7 @@ const Chat = require('./models/chat');
 const  Group = require('./models/group');
 const  GroupMember = require('./models/groupMember');
 
-const { userAuth } = require('./middlewares/userAuthentication');
+const { userAuth } = require('./middlewares/authentication.js');
 
 const userRoutes = require('./routes/user');
 const chatRoutes = require('./routes/chat');

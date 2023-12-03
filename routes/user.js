@@ -2,8 +2,8 @@ const express = require('express');
 
 const { addUser, verifyUser, getUsers } = require('../controllers/user');
 
-const { signupValidation, loginValidation } = require('../middlewares/userValidation');
-const { userAuth } = require('../middlewares/userAuthentication');
+const { signupValidation, loginValidation } = require('../middlewares/validation.js');
+const { userAuth } = require('../middlewares/authentication.js');
 
 
 
