@@ -108,3 +108,92 @@ sendChatBtn.addEventListener('click', async e => {
         }
     }
 });
+
+
+
+
+// get groups
+
+window.addEventListener('DOMContentLoaded', () => {
+    loadGroups();
+});
+
+async function loadGroups() { 
+    try {
+        const { data: { data } } = await axios.get(host + '/group');
+        groupList.innerHTML = '';
+        data.forEach(group => addGroup(group));
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+function addGroup(group) {
+    const { id, name} = group;
+    const li = document.createElement('li');
+    li.classList.add('list-group-item');
+    li.innerHTML = `<span>${name}</span>`;
+    li.setAttribute('groupId', id);
+    groupList.append(li);
+}
+
+
+
+
+//create group
+
+document.getElementById('showCreateGroupModalBtn').addEventListener('click', function () {
+    loadUsers();
+    $('#createGroupModal').modal('show');
+});
+
+async function loadUsers() {
+    try {
+      const { data: { data } } = await axios.get(host + '/user'); 
+        const userList = document.getElementById('userList');
+
+        userList.innerHTML = '';
+
+        data.forEach(user => {
+            const userDiv = document.createElement('div');
+            userDiv.className = 'form-check';
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.className = 'form-check-input';
+            checkbox.value = user.id;
+
+            const label = document.createElement('label');
+            label.className = 'form-check-label';
+            label.innerHTML = user.username;
+
+            userDiv.appendChild(checkbox);
+            userDiv.appendChild(label);
+            userList.appendChild(userDiv);
+        });
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+document.getElementById('createGroupForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const groupName = document.getElementById('groupName').value;
+    const checkboxes = document.getElementsByClassName('form-check-input');
+    
+    const selectedMembers = Array.from(checkboxes).filter(checkbox => checkbox.checked).map(checkbox => parseInt(checkbox.value));
+
+    try {
+        const res = await axios.post(host + '/group', {
+            name: groupName,
+            membersIds: selectedMembers
+        });
+        if (res.data.success) {
+            $('#createGroupModal').modal('hide');
+            loadGroups();
+        }
+    } catch (error) {
+        console.log(error);
+    }
+});
