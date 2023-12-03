@@ -6,9 +6,7 @@ exports.addUser = async (req, res, next) => {
     try {
         const user = req.body;
 
-        const users = await getUsers({
-            where: { email: user.email }
-        });
+        const users = await getUsers({ email: user.email });
         
         if (users.length !== 0) {
             return res.status(400).json({ message: "Email already exists", success: false });

@@ -3,7 +3,12 @@ const User = require('../models/user');
 
 exports.getUsers = async options => {
     try {
-        const users = await User.findAll(options);
+        const whereClause = options.email ? { email: options.email } : {};
+
+        const users = await User.findAll({
+            where: whereClause,
+        });
+
         return users;
 
     } catch (error) {
