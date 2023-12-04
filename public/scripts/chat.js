@@ -73,7 +73,11 @@ function storeToLocalStorage(data) {
     const chats = JSON.parse(localStorage.getItem('chats'));
     while(data.length !== 0) {
         if(chats.length >= 10) chats.shift();
-        chats.push(data.shift());
+        if(chats.length === 0 || data[0].id !== chats[chats.length - 1].id) {
+            chats.push(data.shift());
+        } else {
+            data.shift();
+        }
     }
     localStorage.setItem('chats', JSON.stringify(chats));
 }
@@ -103,6 +107,7 @@ sendChatBtn.addEventListener('click', async e => {
     if(message) {
         try {
             const res = await axios.post(host + `/chat?groupId=${selectedGroupId}`, { message });
+            chatInput.value = '';
         } catch (error) {
             console.log(error.response.data.message);
         }
