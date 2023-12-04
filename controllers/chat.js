@@ -6,9 +6,7 @@ exports.getChats = async (req, res, next) => {
         const groupId = parseInt(req.query.groupId);
         const lastMsgId  = parseInt(req.query.lastMsgId);
 
-        let chats = await getLatestChats({ groupId, limit: 10 });
-        
-        chats = chats.filter(chat => chat.id > lastMsgId)
+        let chats = await getLatestChats({ groupId, limit: 10, lastMsgId });
         
         let chatsData = [];
         if(chats.length !== 0) {
@@ -36,9 +34,16 @@ exports.addChat = async (req, res, next) => {
         const groupId = parseInt(req.query.groupId);
 
         if( message ) {
-            const chat = await addChat({ message, userId: req.user.id, groupId});
-            res.status(200).json({ data: chat, success: true });
 
+            const chat = { 
+                message, 
+                groupId,
+                userId: req.user.id,
+            };
+
+            const data = await addChat({ chat });
+
+            res.status(200).json({ data , success: true });
         } else {
             res.status(200).json({ message: 'message can not be empty', success: true });
         }
