@@ -7,7 +7,16 @@ exports.getGroups = async (req, res, next) => {
 
         const groups = await getGroups({ userId: id });
 
-        res.status(200).json({ data: groups, success: true});
+        const data = groups.map(group => {
+            return {
+                id: group.id,
+                name: group.name,
+                isAdmin: group.adminId === id,
+            }
+        });
+               
+        res.status(200).json({ data, success: true});
+        
     } catch (error) {
         next(error);
     }
