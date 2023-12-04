@@ -3,7 +3,11 @@ const User = require('../models/user');
 
 exports.getUsers = async options => {
     try {
-        const whereClause = options.email ? { email: options.email } : {};
+        const whereClause = options.hasOwnProperty('email') 
+            ? { email: options.email } 
+            : options.hasOwnProperty('id')
+            ? {id : options.id}
+            : {};
 
         const users = await User.findAll({
             where: whereClause,
@@ -18,11 +22,12 @@ exports.getUsers = async options => {
 }
 
 
-exports.addUser = async user => {
+exports.addUser = async options => {
     try {
+        const { user } =  options;
         User.create(user);
-        return;
 
+        return;
     } catch (error) {
         console.error(error.stack);
         throw new Error('Error creating user');

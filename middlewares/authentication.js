@@ -1,5 +1,6 @@
 const { verifyToken } = require('../services/jwt');
 const { getUsers } = require('../services/user');
+const { getGroupMembers } = require('../services/groupMember');
 
 exports.userAuth = async (req, res, next) => {
     try {
@@ -9,9 +10,7 @@ exports.userAuth = async (req, res, next) => {
         }
 
         const id = verifyToken(token).id;
-        const users = await getUsers({
-            where: { id },
-        });
+        const users = await getUsers({ id });
 
         if (users.length !== 0) {
             req.user = users[0];
@@ -24,3 +23,24 @@ exports.userAuth = async (req, res, next) => {
         next(error);
     }
 }
+
+
+exports.groupMemberAuth = async (req, res, next) => {
+    try {
+        const { id } = req.user;
+        const { groupId } = req.query;
+
+        const groupMembers = await getGroupMembers({ groupId, userId: id });
+        
+        if (groupMembers.length === 0) {
+            return res.status(404).json({ message: 'You are not a member of this group' , success: false });
+            
+        } else {
+            next();
+        }
+
+    } catch (error) {
+        next(error);
+    }
+}
+   

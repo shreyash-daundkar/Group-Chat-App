@@ -14,7 +14,7 @@ exports.addUser = async (req, res, next) => {
         
         user.password = await hashPassword(user.password);
 
-        await addUser(user);
+        await addUser({ user });
         res.status(201).json({ success: true });
 
     } catch (error) {
@@ -27,7 +27,7 @@ exports.verifyUser = async (req, res, next) => {
     try {
         const { email, password } = req.body;
 
-        const users = await getUsers({where: {email}});
+        const users = await getUsers({ email });
         if (users.length !== 0) {
 
             const isPasswordCorrect =await comparePassword(password, users[0].password);
@@ -50,7 +50,7 @@ exports.verifyUser = async (req, res, next) => {
 
 exports.getUsers = async (req, res, next) => {
     try {
-        const users = await getUsers();
+        const users = await getUsers({});
 
         const data = users.filter(user => user.id !== req.user.id);
 
