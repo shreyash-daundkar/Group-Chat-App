@@ -12,11 +12,12 @@ const Chat = require('./models/chat');
 const  Group = require('./models/group');
 const  GroupMember = require('./models/groupMember');
 
-const { userAuth } = require('./middlewares/authentication.js');
+const { userAuth, groupMemberAuth } = require('./middlewares/authentication.js');
 
 const userRoutes = require('./routes/user');
 const chatRoutes = require('./routes/chat');
 const groupRouter = require('./routes/group');
+const groupMemberRouter =  require('./routes/groupMember');
 
 
 
@@ -32,9 +33,11 @@ app.use(bodyParser.json());
 
 app.use('/user', userRoutes);
 
-app.use('/chat', userAuth, chatRoutes);
+app.use('/chat', userAuth, groupMemberAuth, chatRoutes);
 
 app.use('/group', userAuth, groupRouter);
+
+app.use('/group-member', userAuth, groupMemberAuth, groupMemberRouter);
 
 
 app.use((error, req, res, next) => {
