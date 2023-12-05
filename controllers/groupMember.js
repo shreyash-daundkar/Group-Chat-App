@@ -1,17 +1,17 @@
-const { getMembers } = require('../services/groupMember');
+const { getGroupMembers } = require('../services/groupMember');
 
 
 exports.getMembers = async (req, res, next) => {
     try {
-        const { groupId } = req.params;
+        const { groupId } = req.query;
 
-        const members = await getMembers({ groupId });
+        const members = await getGroupMembers({ groupId });
 
-        const data = members.filter(member => member.userId !== req.userId);
+        const data = members.filter(member => member.userId !== req.user.id);
 
         res.status(200).json({ data, success: true });
 
     } catch (error) {
         next(error);
     }
-}
+}  
