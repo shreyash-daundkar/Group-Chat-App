@@ -4,7 +4,10 @@ const User = require('../models/user');
 const Group = require('../models/group');
 const GroupMember = require('../models/groupMember');
 
- 
+const { getGroupMembers } = require('./groupMember');
+
+
+
 exports.getGroups = async options => {
     try {
         const { userId } = options;
@@ -29,9 +32,11 @@ exports.getGroups = async options => {
 
 exports.createGroup = async options => {
 
-    const t =  await database.transaction(); 
+    let t;
 
     try {
+        t = await database.transaction(); 
+
         const { name, membersIds, adminId } = options;
 
 
@@ -40,12 +45,51 @@ exports.createGroup = async options => {
         
         await group.addUser(membersIds, { through: GroupMember, transaction: t });
         
-        console.log(group)
-        
-        t.commit();
+        await t.commit();
         return group;
+
     } catch (error) {
-        t.rollback();
+        await t.rollback();
+
+        console.error(error.stack);
+        throw error;
+    }
+}
+
+
+exports.editGroup = async options => {
+
+    let t;
+
+    try {
+        t = await database.transaction(); 
+
+        const { groupId, name, membersIds } = options;
+
+        const group = await Group.findByPk(groupId);
+
+        group.name = name;
+        await group.save({ transaction: t });
+
+        const existingMembers = await getGroupMembers({ groupId });
+
+        existingMembers.forEach(async (member) => {
+
+            if (!membersIds.includes(member.id)) {
+              await member.destroy({ transaction : t});
+            }
+          });
+          
+        const existingMembersIds = existingMembers.map(member => member.id);
+        const membersToAdd = membersIds.filter(id => !existingMembersIds.includes(id));
+
+        await group.addUser(membersToAdd, { through: GroupMember, transaction: t });
+        
+        await t.commit();
+        return group;
+
+    } catch (error) {
+        await t.rollback();
 
         console.error(error.stack);
         throw error;
