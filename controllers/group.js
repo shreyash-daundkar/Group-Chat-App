@@ -1,4 +1,4 @@
-const { getGroups, createGroup } = require('../services/group');
+const { getGroups, createGroup, editGroup } = require('../services/group');
 
 
 exports.getGroups = async (req, res, next) => {
@@ -27,12 +27,30 @@ exports.createGroup =  async (req, res, next) => {
         const { id } = req.user;
         const { name , membersIds } = req.body;
         
-        membersIds.push(id)
+        membersIds.push(id);
 
-        const group =  await createGroup({ name, membersIds, adminId: id });
+        await createGroup({ name, membersIds, adminId: id });
 
-        res.status(201).json({ data: group, success: true});
+        res.status(201).json({ success: true});
     } catch (error) {
         next(error);
     }
+}
+
+
+exports.editGroup = async (req, res, next) => {
+    try {
+        const { groupId } = req.query;
+        const { name, membersIds } = req.body;
+        const { id } = req.user;
+
+        membersIds.push(id)
+    
+        await editGroup({ groupId, name, membersIds });
+    
+        res.status(201).json({ success: true });    
+    } catch (error) {
+        next(error);
+    }
+
 }
