@@ -110,7 +110,11 @@
         <ul id="group-list" class="list-group">
           <li class="list-group-item">Group 1</li>
           <li class="list-group-item">Group 2</li>
-          <li class="list-group-item">Group 3</li>
+          <li class="list-group-item">
+            <span>Group 3</span>
+            <button class="btn btn-sm float-right btn-danger ml-2 delete">X</button>
+            <button class="btn btn-sm float-right btn-warning ml-2 edit">Edit</button>
+          </li>
         </ul>
     </div>
     
@@ -161,7 +165,7 @@
             <label for="groupMembers">Select Group Members:</label>
             <div id="userList" class="form-check"></div>
           </div>
-          <button type="submit" class="btn btn-primary">Create Group</button>
+          <button type="submit" class="btn btn-primary">Save</button>
         </form>
       </div>
     </div>

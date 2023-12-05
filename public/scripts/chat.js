@@ -31,15 +31,17 @@ if (token) {
 
 
 
+groupList.addEventListener('click', (e) => {
+    if(e.target.classList.contains('list-group-item')) loadChats(e);
+    if(e.target.classList.contains('edit')) editGroup(e);
+    //if(e.target.classList.contains('delete')) deleteGroup(e);
+});
 
 //get chats
 
 let selectedGroupId;
 
-groupList.addEventListener('click', loadChats);
 async function loadChats(e) { 
-
-    if(!e.target.classList.contains('list-group-item')) return;
 
     const groupItems = document.querySelectorAll('#group-list .list-group-item');
     groupItems.forEach(item => item.classList.remove('active'));
@@ -134,10 +136,14 @@ async function loadGroups() {
 }
 
 function addGroup(group) {
-    const { id, name} = group;
+    const { id, name, isAdmin} = group;
     const li = document.createElement('li');
     li.classList.add('list-group-item');
-    li.innerHTML = `<span>${name}</span>`;
+    li.innerHTML = isAdmin
+         ? `<span>${name}</span>
+         <button class="btn btn-sm float-right btn-danger ml-2 delete">X</button>
+         <button class="btn btn-sm float-right btn-warning ml-2 edit">Edit</button>`
+         : `<span>${name}</span>`;
     li.setAttribute('groupId', id);
     groupList.append(li);
 }
@@ -145,12 +151,29 @@ function addGroup(group) {
 
 
 
-//create group
+//create & edit group
+
+let editGroupId = null;
+
+async function editGroup(e) {
+    editGroupId = e.target.parentNode.getAttribute('groupId');
+
+    document.getElementById('groupName').value = e.target.parentNode.children[0].textContent;
+
+    await loadUsers();
+    await checkedExistingMembers();
+
+    $('#createGroupModal').modal('show');
+};
 
 document.getElementById('showCreateGroupModalBtn').addEventListener('click', function () {
+    
+    editGroupId = null;
     loadUsers();
+
     $('#createGroupModal').modal('show');
 });
+
 
 async function loadUsers() {
     try {
@@ -181,6 +204,24 @@ async function loadUsers() {
     }
 }
 
+
+async function checkedExistingMembers() {
+    try {
+        const userList = document.getElementById('userList');
+        
+        const { data: { data } } = await axios.get(host + `/group-member?groupId=${editGroupId}`);
+        
+        data.forEach(member => {
+            const checkbox = userList.querySelector(`input[value="${member.userId}"]`);
+            checkbox.checked = true;
+        });
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
 document.getElementById('createGroupForm').addEventListener('submit', async function (e) {
     e.preventDefault();
 
@@ -190,13 +231,25 @@ document.getElementById('createGroupForm').addEventListener('submit', async func
     const selectedMembers = Array.from(checkboxes).filter(checkbox => checkbox.checked).map(checkbox => parseInt(checkbox.value));
 
     try {
-        const res = await axios.post(host + '/group', {
+        const data = {
             name: groupName,
             membersIds: selectedMembers
-        });
-        if (res.data.success) {
-            $('#createGroupModal').modal('hide');
-            loadGroups();
+        }
+        
+        if(editGroupId) {
+            const res = await axios.put(host + `/group?groupId=${editGroupId}`, data);
+            if (res.data.success) {
+                $('#createGroupModal').modal('hide');
+                loadGroups();
+                editGroupId = null;
+            }
+
+        } else {
+            const res = await axios.post(host + '/group', data);
+            if (res.data.success) {
+                $('#createGroupModal').modal('hide');
+                loadGroups();
+            }
         }
     } catch (error) {
         console.log(error);
