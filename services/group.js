@@ -7,6 +7,19 @@ const GroupMember = require('../models/groupMember');
 const { getGroupMembers } = require('./groupMember');
 
 
+exports.getGroupById = async options => {
+    try {
+        const { groupId } = options;
+
+        const group = await Group.findByPk(groupId);
+        return group;
+
+    } catch (error) {
+        console.error(error.stack);
+        throw error;
+    }
+}
+
 
 exports.getGroups = async options => {
     try {
