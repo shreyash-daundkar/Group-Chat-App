@@ -1,4 +1,4 @@
-const { getGroups, createGroup, editGroup } = require('../services/group');
+const { getGroups, createGroup, editGroup, deleteGroup } = require('../services/group');
 
 
 exports.getGroups = async (req, res, next) => {
@@ -48,9 +48,23 @@ exports.editGroup = async (req, res, next) => {
     
         await editGroup({ groupId, name, membersIds });
     
-        res.status(201).json({ success: true });    
+        res.status(201).json({ success: true });
+
     } catch (error) {
         next(error);
     }
+}
 
+
+exports.deleteGroup = async (req, res, next) => {
+    try {
+        const { groupId } = req.query;
+
+        await deleteGroup({ groupId });
+
+        res.status(201).json({ success: true });
+
+    } catch (error) {
+        next(error);
+    }
 }
