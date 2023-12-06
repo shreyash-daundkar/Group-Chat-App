@@ -46,7 +46,7 @@ exports.createGroup = async options => {
         await group.addUser(membersIds, { through: GroupMember, transaction: t });
         
         await t.commit();
-        return group;
+        return;
 
     } catch (error) {
         await t.rollback();
@@ -86,11 +86,26 @@ exports.editGroup = async options => {
         await group.addUser(membersToAdd, { through: GroupMember, transaction: t });
         
         await t.commit();
-        return group;
+        return;
 
     } catch (error) {
         await t.rollback();
 
+        console.error(error.stack);
+        throw error;
+    }
+}
+
+
+exports.deleteGroup = async options => {
+    try {
+        const { groupId } = options;
+
+        const group = await Group.findByPk(groupId);
+
+        await group.destroy();
+
+    } catch (error) {
         console.error(error.stack);
         throw error;
     }
