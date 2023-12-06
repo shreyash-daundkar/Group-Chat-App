@@ -1,6 +1,7 @@
 const { verifyToken } = require('../services/jwt');
 const { getUsers } = require('../services/user');
 const { getGroupMembers } = require('../services/groupMember');
+const { getGroupById } = require('../services/group');
 
 exports.userAuth = async (req, res, next) => {
     try {
@@ -43,4 +44,23 @@ exports.groupMemberAuth = async (req, res, next) => {
         next(error);
     }
 }
-   
+
+
+exports.adminAuth = async (req, res, next) => {
+    try {
+        const { groupId } = req.query;
+        const { id } = req.user;
+
+        const { adminId } = await getGroupById({ groupId });
+
+        if(adminId !== id) {
+            return res.status(404).json({ message: 'You are not a admin of this group', success: false });
+
+        } else {
+            next();
+        }
+
+    } catch (error) {
+        next(error);
+    }
+}
