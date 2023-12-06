@@ -34,7 +34,7 @@ if (token) {
 groupList.addEventListener('click', (e) => {
     if(e.target.classList.contains('list-group-item')) loadChats(e);
     if(e.target.classList.contains('edit')) editGroup(e);
-    //if(e.target.classList.contains('delete')) deleteGroup(e);
+    if(e.target.classList.contains('delete')) deleteGroup(e);
 });
 
 //get chats
@@ -255,3 +255,18 @@ document.getElementById('createGroupForm').addEventListener('submit', async func
         console.log(error);
     }
 });
+
+
+// delete group
+
+async function deleteGroup(e) {
+    try {
+        const groupId = e.target.parentNode.getAttribute('groupId');
+
+        const { data: { success } } = await axios.delete(host + `/group?groupId=${groupId}`);
+        if(success) loadGroups();
+        
+    } catch (error) {
+        console.log(error)
+    }
+}
