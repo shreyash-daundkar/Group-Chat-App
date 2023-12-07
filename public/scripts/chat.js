@@ -212,8 +212,33 @@ async function checkedExistingMembers() {
         const { data: { data } } = await axios.get(host + `/group-member?groupId=${editGroupId}`);
         
         data.forEach(member => {
+            if(member.isAdmin) return
             const checkbox = userList.querySelector(`input[value="${member.userId}"]`);
             checkbox.checked = true;
+        });
+
+    
+        const adminForm = document.querySelector('#select-admin-form');
+        adminForm.innerHTML = `<label for="adminSelect">Select Admin:</label>`;
+        const adminSelect = document.createElement('select');
+        adminSelect.classList.add('form-control');
+        adminSelect.id = 'adminSelect';
+        adminForm.append(adminSelect);
+            
+
+        adminSelect.innerHTML = '';
+
+        data.forEach(member => {
+            const option = document.createElement('option');
+            option.value = member.userId;
+            option.textContent = member.username;
+            adminSelect.appendChild(option);
+        });
+        
+        data.forEach(member => {
+            if (member.isAdmin) {
+                adminSelect.value = member.userId;
+            }
         });
 
     } catch (error) {
@@ -230,13 +255,16 @@ document.getElementById('createGroupForm').addEventListener('submit', async func
     
     const selectedMembers = Array.from(checkboxes).filter(checkbox => checkbox.checked).map(checkbox => parseInt(checkbox.value));
 
-    try {
-        const data = {
-            name: groupName,
-            membersIds: selectedMembers
-        }
-        
+    const selectedAdmin = document.querySelector('#adminSelect').value;
+
+    try {  
         if(editGroupId) {
+            const data = {
+                name: groupName,
+                membersIds: selectedMembers,
+                adminId: selectedAdmin,
+            }
+
             const res = await axios.put(host + `/group?groupId=${editGroupId}`, data);
             if (res.data.success) {
                 $('#createGroupModal').modal('hide');
@@ -245,6 +273,11 @@ document.getElementById('createGroupForm').addEventListener('submit', async func
             }
 
         } else {
+            const data = {
+                name: groupName,
+                membersIds: selectedMembers
+            }
+
             const res = await axios.post(host + '/group', data);
             if (res.data.success) {
                 $('#createGroupModal').modal('hide');
