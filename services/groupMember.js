@@ -1,4 +1,5 @@
  const GroupMember = require('../models/groupMember');
+ const User = require('../models/user');
 
 
 
@@ -10,6 +11,10 @@ exports.getGroupMembers = async options => {
         
         const groupMembers = await GroupMember.findAll({
             where: whereClause,
+            include: [{
+                model: User,
+                attributes: ['id', 'username']
+            }]
         });
         
         return groupMembers;
