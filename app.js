@@ -13,7 +13,7 @@ const Chat = require('./models/chat');
 const  Group = require('./models/group');
 const  GroupMember = require('./models/groupMember');
 
-const { userAuth, groupMemberAuth } = require('./middlewares/authentication.js');
+const { userAuth, socketAuth, groupMemberAuth } = require('./middlewares/authentication.js');
 
 const userRoutes = require('./routes/user');
 const chatRoutes = require('./routes/chat');
@@ -34,7 +34,8 @@ const io = require('socket.io')(server, {
 });
 
 io.on('connection', (socket) => {
-    console.log(socket.id);
+    socketAuth(socket);
+    console.log(socket.handshake.auth.token);
 });
 
 

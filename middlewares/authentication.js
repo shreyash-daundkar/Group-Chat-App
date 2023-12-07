@@ -26,6 +26,31 @@ exports.userAuth = async (req, res, next) => {
 }
 
 
+exports.socketAuth = async (socket) => {
+    try {
+        const token = socket.handshake.auth.token;
+        
+        if (!token) {
+            return socket.emit('error', { message: 'Unauthorized - Token not found in cookie', success: false });
+        }
+
+        const id = verifyToken(token).id;
+        const users = await getUsers({ id });
+
+        if (users.length !== 0) {
+            socket.user = users[0];
+            console.log('done');
+        } else {
+            return socket.emit('error', { message: 'User not found' , success: false });
+        }
+
+    } catch (error) {
+        console.log(error.stack);
+        return socket.emit('error', { message: 'failed to send message', success: false });
+    }
+}
+
+
 exports.groupMemberAuth = async (req, res, next) => {
     try {
         const { id } = req.user;

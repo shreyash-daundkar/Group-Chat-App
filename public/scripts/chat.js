@@ -1,6 +1,5 @@
 const host = 'http://localhost:4000';
 
-const socket = io(host);
 
 
 
@@ -19,9 +18,9 @@ function getCookie(name) {
     const parts = value.split(`; ${name}=`);
     
     if (parts.length === 2) {
-      return parts.pop().split(';').shift();
+        return parts.pop().split(';').shift();
     }
-  }
+}
   
 const token = getCookie('token');
 if (token) {
@@ -30,6 +29,16 @@ if (token) {
     window.location.href = 'login.html';
 }
 
+
+
+
+// socket 
+
+const socket = io(host, { auth: { token }});
+
+socket.on('error', data => {
+    console.log(data);
+})
 
 
 groupList.addEventListener('click', (e) => {
