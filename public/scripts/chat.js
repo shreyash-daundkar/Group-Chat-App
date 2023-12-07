@@ -1,5 +1,6 @@
 const host = 'http://localhost:4000';
 
+const socket = io(host);
 
 
 
@@ -55,7 +56,7 @@ async function loadChats(e) {
 
     localStorage.setItem('chats', JSON.stringify([]));
 
-    setInterval(async () => {
+    //setInterval(async () => {
 
         const { data: { data }} = await axios.get(host+ `/chat?groupId=${selectedGroupId}&lastMsgId=${lastMsgId}`);
         storeToLocalStorage(data);
@@ -68,18 +69,18 @@ async function loadChats(e) {
         chatBox.innerHTML = '';
         chats.forEach(chat => addChat(chat));
 
-    }, 3000);
+    //}, 3000);
 }
 
 function storeToLocalStorage(data) {
     const chats = JSON.parse(localStorage.getItem('chats'));
     while(data.length !== 0) {
         if(chats.length >= 10) chats.shift();
-        if(chats.length === 0 || data[0].id !== chats[chats.length - 1].id) {
+        //if(chats.length === 0 || data[0].id !== chats[chats.length - 1].id) {
             chats.push(data.shift());
-        } else {
-            data.shift();
-        }
+        //} else {
+        //     data.shift();
+        // }
     }
     localStorage.setItem('chats', JSON.stringify(chats));
 }

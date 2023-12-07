@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
+const http = require('http');
 const cors = require('cors');
 
 require('dotenv').config();
@@ -24,6 +25,17 @@ const groupMemberRouter =  require('./routes/groupMember');
 
 const app = express();
 
+const server = http.createServer(app);
+
+const io = require('socket.io')(server, {
+    cors: {
+      origin: '*',
+    }
+});
+
+io.on('connection', (socket) => {
+    console.log(socket.id);
+});
 
 
 app.use( cors({ origin: 'http://127.0.0.1:5500' }) );
@@ -62,5 +74,5 @@ Chat.belongsTo(Group);
 
 
 database.sync()
- .then(() => app.listen(process.env.PORT || 4000))
+ .then(() => server.listen(process.env.PORT || 4000))
  .catch(error => console.error(error.stack))
