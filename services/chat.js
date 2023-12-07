@@ -38,9 +38,9 @@ exports.getLatestChats = async options => {
 
 exports.addChat = async options => {
     try {
-        const { chat } = options;
+        const { message, groupId, userId } = options;
 
-        const res = await Chat.create(chat);
+        const res = await Chat.create({ message, groupId, userId });
 
         return res;
 

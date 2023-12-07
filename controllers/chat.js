@@ -28,27 +28,26 @@ exports.getChats = async (req, res, next) => {
     }
 }
 
-exports.addChat = async (req, res, next) => {
+exports.addChat = async (io, socket, data) => {
     try {
-        const { message } = req.body;
-        const groupId = parseInt(req.query.groupId);
+        const { message, groupId } = data;
+
+        console.log(message);
 
         if( message ) {
 
-            const chat = { 
-                message, 
-                groupId,
-                userId: req.user.id,
-            };
+            const chat = await addChat({ 
+                message: message, 
+                groupId: groupId,
+                userId: socket.user.id,
+            });
 
-            const data = await addChat({ chat });
-
-            res.status(200).json({ data , success: true });
+            io.emit('recived-chat', { data: chat , success: true });
         } else {
-            res.status(200).json({ message: 'message can not be empty', success: true });
+            return socket.emit('error', { message: 'message can not be empty', success: false });
         }
-        res.status(200).json({ data: chatsData, success: true });
     } catch (error) {
-        next(error);
+        console.error(error.stack);
+        return socket.emit('error', { message: 'Error sending chat', success: false });
     }
 }
