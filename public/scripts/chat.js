@@ -107,7 +107,7 @@ function addChat(chat) {
     div.innerHTML = `<p><strong>${username}: </strong>${message}</p>`
     chatBox.append(div);
 }
- 
+
 
 
 
@@ -118,7 +118,8 @@ sendChatBtn.addEventListener('click', async e => {
     const message = chatInput.value;
     if(message) {
         try {
-            const res = await axios.post(host + `/chat?groupId=${selectedGroupId}`, { message });
+            //const res = await axios.post(host + `/chat?groupId=${selectedGroupId}`, { message });
+            socket.emit('send-chat', { groupId: selectedGroupId, message });
             chatInput.value = '';
         } catch (error) {
             console.log(error.response.data.message);
