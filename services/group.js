@@ -77,11 +77,12 @@ exports.editGroup = async options => {
     try {
         t = await database.transaction(); 
 
-        const { groupId, name, membersIds } = options;
+        const { groupId, name, membersIds, adminId } = options;
 
         const group = await Group.findByPk(groupId);
 
         group.name = name;
+        group.adminId = adminId;
         await group.save({ transaction: t });
 
         const existingMembers = await getGroupMembers({ groupId });

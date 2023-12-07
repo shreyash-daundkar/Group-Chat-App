@@ -41,12 +41,12 @@ exports.createGroup =  async (req, res, next) => {
 exports.editGroup = async (req, res, next) => {
     try {
         const { groupId } = req.query;
-        const { name, membersIds } = req.body;
+        const { name, membersIds, adminId } = req.body;
         const { id } = req.user;
 
         membersIds.push(id)
     
-        await editGroup({ groupId, name, membersIds });
+        await editGroup({ groupId, name, membersIds, adminId });
     
         res.status(201).json({ success: true });
 
