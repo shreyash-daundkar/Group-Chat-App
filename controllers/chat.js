@@ -45,7 +45,8 @@ exports.addChat = async (io, socket, data) => {
                 username: socket.user.username,
             }
 
-            io.emit('recived-chat', { data: chat , success: true });
+            io.to(data.groupId).emit('recived-chat', { data: chat , success: true });
+            
         } else {
             return socket.emit('error', { message: 'message can not be empty', success: false });
         }

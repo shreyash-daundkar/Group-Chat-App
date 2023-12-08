@@ -39,6 +39,18 @@ io.on('connection', async socket => {
     const isUser = await socketUserAuth(socket);
     if (isUser) {
 
+
+        socket.on('join-chat-room', async data => {
+            
+            const isMember = await socketGroupMemberAuth(socket, data);
+            if (isMember) {
+
+                socket.leaveAll();
+                socket.join(data.groupId);
+            }
+        });
+
+
         socket.on('send-chat', async data => {
 
             const isMember = await socketGroupMemberAuth(socket, data);
@@ -46,6 +58,11 @@ io.on('connection', async socket => {
 
                 addChat(io, socket, data);
             }
+        });
+
+        
+        socket.on('disconnect', () => {
+            socket.leaveAll();
         });
     }
 });

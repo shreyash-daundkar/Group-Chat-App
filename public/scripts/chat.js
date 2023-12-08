@@ -79,6 +79,9 @@ async function loadChats(e) {
         chats.forEach(chat => addChat(chat));
 
     //}, 3000);
+
+
+    socket.emit('join-chat-room', { groupId: selectedGroupId });
 }
 
 function storeToLocalStorage(data) {
