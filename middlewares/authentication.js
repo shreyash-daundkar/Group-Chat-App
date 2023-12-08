@@ -26,12 +26,13 @@ exports.userAuth = async (req, res, next) => {
 }
 
 
-exports.socketAuth = async (socket) => {
+exports.socketUserAuth = async (socket) => {
     try {
         const token = socket.handshake.auth.token;
         
         if (!token) {
-            return socket.emit('error', { message: 'Unauthorized - Token not found in cookie', success: false });
+            socket.emit('error', { message: 'Unauthorized - Token not found in cookie', success: false });
+            return false;
         }
 
         const id = verifyToken(token).id;
@@ -39,14 +40,17 @@ exports.socketAuth = async (socket) => {
 
         if (users.length !== 0) {
             socket.user = users[0];
-            console.log('done');
+
+            return true;
         } else {
-            return socket.emit('error', { message: 'User not found' , success: false });
+            socket.emit('error', { message: 'User not found' , success: false });
+            return false;
         }
 
     } catch (error) {
         console.log(error.stack);
-        return socket.emit('error', { message: 'failed to send message', success: false });
+        socket.emit('error', { message: 'Error in authenticating user', success: false });
+        return false;
     }
 }
 
@@ -87,5 +91,28 @@ exports.adminAuth = async (req, res, next) => {
 
     } catch (error) {
         next(error);
+    }
+}
+
+
+exports.socketGroupMemberAuth = async (socket, data) => {
+    try {
+        const { id } = socket.user;
+        const { groupId } = data;
+
+        const groupMembers = await getGroupMembers({ groupId, userId: id });
+        
+        if (groupMembers.length === 0) {
+            socket.emit('error', { message: 'You are not a member of this group' , success: false });
+            return false;
+            
+        } else {
+            return true;
+        }
+
+    } catch (error) {
+        console.log(error.stack);
+        socket.emit('error', { message: 'Error authenticating group memeber' , success: false });
+        return false;
     }
 }
