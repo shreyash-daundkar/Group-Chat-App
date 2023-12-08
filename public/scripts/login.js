@@ -23,9 +23,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
         try {
             const response = await axios.post(`http://${host}/user/login`, loginData);
-            const { token, success } = response.data;
+            const { data: { id, token }, success } = response.data;
             if (success) {
                 document.cookie = `token=${token}`;
+                localStorage.setItem('userId', id);
                 window.location.href = 'chat.html';
             } else {
                 showAlert('Something went wrong. Please try again.', 'danger');
@@ -34,6 +35,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if (error.response && error.response.data) {
                 showAlert(error.response.data.message , 'danger');
             } else {
+                console.log(error);
                 showAlert('Something went wrong. Please try again.', 'danger');
             }
         }

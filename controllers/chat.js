@@ -12,12 +12,12 @@ exports.getChats = async (req, res, next) => {
         if(chats.length !== 0) {
             
             chatsData = chats.map(chat => {
-                const { id, message, user } = chat;
+                const { id, message, userId, user } = chat;
                 return { 
                     id,
                     message,
+                    userId,
                     username: user.username,
-                    isCurrUser: user.id === req.user.id
                 }
             });
         }
@@ -30,17 +30,20 @@ exports.getChats = async (req, res, next) => {
 
 exports.addChat = async (io, socket, data) => {
     try {
-        const { message, groupId } = data;
+        if( data.message ) {
 
-        console.log(message);
-
-        if( message ) {
-
-            const chat = await addChat({ 
-                message: message, 
-                groupId: groupId,
+            const { id, message, userId } = await addChat({ 
+                message: data.message, 
+                groupId: data.groupId,
                 userId: socket.user.id,
             });
+
+            chat = {
+                id,
+                message,
+                userId,
+                username: socket.user.username,
+            }
 
             io.emit('recived-chat', { data: chat , success: true });
         } else {

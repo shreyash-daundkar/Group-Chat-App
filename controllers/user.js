@@ -35,7 +35,7 @@ exports.verifyUser = async (req, res, next) => {
                 
                 const token = signToken({ id: users[0].id });
 
-                return res.status(200).json({ token, success: true });
+                return res.status(200).json({ data: { id: users[0].id, token }, success: true });
             } else {
                 return res.status(401).json({ message: "Password is incorrect", success: false });
             }  
