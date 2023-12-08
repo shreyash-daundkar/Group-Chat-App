@@ -35,37 +35,6 @@ const io = require('socket.io')(server, {
     }
 });
 
-io.on('connection', async socket => {
-    const isUser = await socketUserAuth(socket);
-    if (isUser) {
-
-
-        socket.on('join-chat-room', async data => {
-            
-            const isMember = await socketGroupMemberAuth(socket, data);
-            if (isMember) {
-
-                socket.leaveAll();
-                socket.join(data.groupId);
-            }
-        });
-
-
-        socket.on('send-chat', async data => {
-
-            const isMember = await socketGroupMemberAuth(socket, data);
-            if (isMember) {
-
-                addChat(io, socket, data);
-            }
-        });
-
-        
-        socket.on('disconnect', () => {
-            socket.leaveAll();
-        });
-    }
-});
 
 
 
@@ -87,6 +56,30 @@ app.use('/group-member', userAuth, groupMemberAuth, groupMemberRouter);
 app.use((error, req, res, next) => {
     console.error(error.stack);
     res.status(500).json({ message: 'Something went wrong!', success: false });
+});
+
+
+
+const groupNamespace = io.of('/group');
+
+groupNamespace.use(socketUserAuth);
+
+groupMemberRouter.use(socketGroupMemberAuth);
+
+groupNamespace.on('connection', async socket => {
+    
+    socket.on('join-chat-room', async data => {
+        socket.leaveAll();
+        socket.join(data.groupId);
+    });
+
+    socket.on('send-chat', async data => {
+        addChat(groupNamespace, socket, data);
+    });
+    
+    socket.on('disconnect', () => {
+        socket.leaveAll();
+    });   
 });
 
 
