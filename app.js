@@ -13,7 +13,7 @@ const Chat = require('./models/chat');
 const  Group = require('./models/group');
 const  GroupMember = require('./models/groupMember');
 
-const { userAuth, socketAuth, groupMemberAuth } = require('./middlewares/authentication.js');
+const { userAuth, socketUserAuth, groupMemberAuth, socketGroupMemberAuth } = require('./middlewares/authentication.js');
 
 const { addChat } = require('./controllers/chat.js');
 
@@ -31,20 +31,26 @@ const server = http.createServer(app);
 
 const io = require('socket.io')(server, {
     cors: {
-      origin: '*',
+      origin: 'http://127.0.0.1:5500',
     }
 });
 
-io.on('connection', async (socket) => {
-    await socketAuth(socket);
+io.on('connection', async socket => {
+    const isUser = await socketUserAuth(socket);
+    if (isUser) {
 
-    if(socket.user) {
-        socket.on('send-chat', data => {
-            console.log(data)
-            addChat(io, socket, data);
+        socket.on('send-chat', async data => {
+
+            const isMember = await socketGroupMemberAuth(socket, data);
+            if (isMember) {
+
+                addChat(io, socket, data);
+            }
         });
     }
 });
+
+
 
 
 app.use( cors({ origin: 'http://127.0.0.1:5500' }) );
