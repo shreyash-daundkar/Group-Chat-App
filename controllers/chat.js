@@ -28,7 +28,7 @@ exports.getChats = async (req, res, next) => {
     }
 }
 
-exports.addChat = async (io, socket, data) => {
+exports.addChat = async (groupNamespace, socket, data) => {
     try {
         if( data.message ) {
 
@@ -44,9 +44,9 @@ exports.addChat = async (io, socket, data) => {
                 userId,
                 username: socket.user.username,
             }
-
-            io.to(data.groupId).emit('recived-chat', { data: chat , success: true });
             
+            return groupNamespace.to(data.groupId).emit('received-chat', { data: chat , success: true });
+
         } else {
             return socket.emit('error', { message: 'message can not be empty', success: false });
         }
