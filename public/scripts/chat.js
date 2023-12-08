@@ -95,10 +95,10 @@ function storeToLocalStorage(data) {
 }
 
 function addChat(chat) {
-    let { username , message, isCurrUser } = chat;
+    let { username , message, userId} = chat;
     const div = document.createElement('div');
     div.classList.add('message');
-    if(isCurrUser) {
+    if(userId === parseInt(localStorage.getItem('userId'))) {
         username = 'You';
         div.classList.add('user2');
     } else {
@@ -107,6 +107,20 @@ function addChat(chat) {
     div.innerHTML = `<p><strong>${username}: </strong>${message}</p>`
     chatBox.append(div);
 }
+
+
+socket.on('recived-chat', data => {
+
+    const arr = [];
+    arr.push(data.data)
+
+    storeToLocalStorage(arr);
+
+    const chats = JSON.parse(localStorage.getItem('chats'));
+
+    chatBox.innerHTML = '';
+    chats.forEach(chat => addChat(chat));
+});
 
 
 
