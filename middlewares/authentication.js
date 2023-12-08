@@ -26,13 +26,12 @@ exports.userAuth = async (req, res, next) => {
 }
 
 
-exports.socketUserAuth = async (socket) => {
+exports.socketUserAuth = async (socket, next) => {
     try {
         const token = socket.handshake.auth.token;
         
         if (!token) {
             socket.emit('error', { message: 'Unauthorized - Token not found in cookie', success: false });
-            return false;
         }
 
         const id = verifyToken(token).id;
@@ -41,16 +40,14 @@ exports.socketUserAuth = async (socket) => {
         if (users.length !== 0) {
             socket.user = users[0];
 
-            return true;
+            return next();
         } else {
             socket.emit('error', { message: 'User not found' , success: false });
-            return false;
         }
 
     } catch (error) {
         console.log(error.stack);
         socket.emit('error', { message: 'Error in authenticating user', success: false });
-        return false;
     }
 }
 
@@ -95,24 +92,23 @@ exports.adminAuth = async (req, res, next) => {
 }
 
 
-exports.socketGroupMemberAuth = async (socket, data) => {
-    try {
-        const { id } = socket.user;
-        const { groupId } = data;
-
-        const groupMembers = await getGroupMembers({ groupId, userId: id });
-        
-        if (groupMembers.length === 0) {
-            socket.emit('error', { message: 'You are not a member of this group' , success: false });
-            return false;
+exports.socketGroupMemberAuth = async data => {
+    return async (socket, next) => {
+        try {
+            const { id } = socket.user;
+            const { groupId } = data;
+    
+            const groupMembers = await getGroupMembers({ groupId, userId: id });
             
-        } else {
-            return true;
+            if (groupMembers.length === 0) {
+                socket.emit('error', { message: 'You are not a member of this group' , success: false });
+                
+            } else {
+                return next();
+            }
+        } catch (error) {
+            console.log(error.stack);
+            socket.emit('error', { message: 'Error authenticating group memeber' , success: false });
         }
-
-    } catch (error) {
-        console.log(error.stack);
-        socket.emit('error', { message: 'Error authenticating group memeber' , success: false });
-        return false;
     }
 }
