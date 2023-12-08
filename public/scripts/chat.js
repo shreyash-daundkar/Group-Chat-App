@@ -34,7 +34,7 @@ if (token) {
 
 // socket 
 
-const socket = io(host, { auth: { token }});
+const socket = io(host + '/group', { auth: { token }});
 
 socket.on('error', data => {
     console.log(data);
@@ -112,17 +112,23 @@ function addChat(chat) {
 }
 
 
-socket.on('recived-chat', data => {
+socket.on('received-chat', data => {
 
-    const arr = [];
-    arr.push(data.data)
+    try {
+        const arr = [];
+        arr.push(data.data)
+    
+        storeToLocalStorage(arr);
+    
+        const chats = JSON.parse(localStorage.getItem('chats'));
+    
+        chatBox.innerHTML = '';
+        chats.forEach(chat => addChat(chat));
+        
+    } catch (error) {
+        console.log(error);
+    }
 
-    storeToLocalStorage(arr);
-
-    const chats = JSON.parse(localStorage.getItem('chats'));
-
-    chatBox.innerHTML = '';
-    chats.forEach(chat => addChat(chat));
 });
 
 
