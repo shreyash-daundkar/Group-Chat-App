@@ -36,6 +36,27 @@ const io = require('socket.io')(server, {
 });
 
 
+const groupNamespace = io.of('/group');
+
+groupNamespace.use(socketUserAuth);
+
+groupMemberRouter.use(socketGroupMemberAuth);
+
+groupNamespace.on('connection', async socket => {
+    
+    socket.on('join-chat-room', async data => {
+        socket.leaveAll();
+        socket.join(data.groupId);
+    });
+
+    socket.on('send-chat', async data => {
+        addChat(groupNamespace, socket, data);
+    });
+    
+    socket.on('disconnect', () => {
+        socket.leaveAll();
+    });   
+});
 
 
 
@@ -60,27 +81,6 @@ app.use((error, req, res, next) => {
 
 
 
-const groupNamespace = io.of('/group');
-
-groupNamespace.use(socketUserAuth);
-
-groupMemberRouter.use(socketGroupMemberAuth);
-
-groupNamespace.on('connection', async socket => {
-    
-    socket.on('join-chat-room', async data => {
-        socket.leaveAll();
-        socket.join(data.groupId);
-    });
-
-    socket.on('send-chat', async data => {
-        addChat(groupNamespace, socket, data);
-    });
-    
-    socket.on('disconnect', () => {
-        socket.leaveAll();
-    });   
-});
 
 
 
