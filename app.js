@@ -74,6 +74,10 @@ app.use('/group', userAuth, groupRouter);
 app.use('/group-member', userAuth, groupMemberAuth, groupMemberRouter);
 
 
+app.use('/', (req, res, next) => {
+    res.sendFile(path.join(__dirname, `public${req.url}`));
+});
+
 app.use((error, req, res, next) => {
     console.error(error.stack);
     res.status(500).json({ message: 'Something went wrong!', success: false });
