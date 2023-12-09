@@ -60,7 +60,7 @@ groupNamespace.on('connection', async socket => {
 
 
 
-app.use( cors({ origin: 'http://127.0.0.1:5500' }) );
+app.use( cors({ origin: 'http://51.20.222.233' }) );
 
 app.use(bodyParser.json());
 

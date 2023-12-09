@@ -1,8 +1,6 @@
 //host
 
-// const { host } = new URL(window.location.href);
-
-const host = 'localhost:4000';
+const { host } = new URL(window.location.href);
 
 
 

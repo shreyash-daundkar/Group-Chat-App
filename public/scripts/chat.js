@@ -1,4 +1,4 @@
-const host = window.location.origin;
+const host  = new Url(window.location.origin);
 
 
 
