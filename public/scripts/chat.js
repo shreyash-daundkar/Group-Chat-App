@@ -7,7 +7,7 @@ const chatBox = document.querySelector('.chat-box');
 const groupList = document.querySelector('#group-list');
 const sendChatBtn = document.querySelector('#send-chat-btn');
 const chatInput = document.querySelector('#chat-input');
-
+const imageInput = document.getElementById('image-input');
 
 
 
@@ -98,7 +98,8 @@ function storeToLocalStorage(data) {
 }
 
 function addChat(chat) {
-    let { username , message, userId} = chat;
+
+    let { username , message, imageUrl, userId} = chat;
     const div = document.createElement('div');
     div.classList.add('message');
     if(userId === parseInt(localStorage.getItem('userId'))) {
@@ -107,8 +108,29 @@ function addChat(chat) {
     } else {
         div.classList.add('user1');
     }
-    div.innerHTML = `<p><strong>${username}: </strong>${message}</p>`
-    chatBox.append(div);
+
+    div.innerHTML = `<p><strong>${username}:</strong>`;
+
+    if (message) {
+        div.innerHTML += `<span>${message}</span>`
+    }
+
+    if (imageUrl) {
+        const img = document.createElement('img');
+        img.src = imageUrl;
+        img.classList.add('received-image');
+        img.setAttribute('onclick', `window.open('${imageUrl}', '_blank')`);
+        //img.addEventListener('click', () => window.open(imageUrl, '_blank'));
+        div.append(img);
+    }
+
+    div.innerHTML += `</p><br>`;
+
+    chatBox.append(div);   
+}
+
+function openImageInNewTab(imageUrl) {
+  window.open(imageUrl, '_blank');
 }
 
 
@@ -139,11 +161,35 @@ socket.on('received-chat', data => {
 sendChatBtn.addEventListener('click', async e => {
     e.preventDefault();
     const message = chatInput.value;
-    if(message) {
+
+    if (selectedGroupId && (message || imageInput.files.length > 0)) {
         try {
+            const data = {
+                groupId: selectedGroupId,
+                message: null,
+                imageBuffer: null,
+            }
+
+            if (message) {
+                data.message = message;
+            }
+
+            if (imageInput.files.length > 0) {
+
+                const reader = new FileReader();
+                reader.readAsArrayBuffer(imageInput.files[0]);
+
+                reader.onload = (event) => {
+                    data.imageBuffer = event.target.result;
+                    socket.emit('send-chat', data);
+                }
+            } else {
+                socket.emit('send-chat', data);
+            }
             //const res = await axios.post(host + `/chat?groupId=${selectedGroupId}`, { message });
-            socket.emit('send-chat', { groupId: selectedGroupId, message });
             chatInput.value = '';
+            imageInput.value = '';
+
         } catch (error) {
             console.log(error.response.data.message);
         }
@@ -289,14 +335,14 @@ document.getElementById('createGroupForm').addEventListener('submit', async func
     
     const selectedMembers = Array.from(checkboxes).filter(checkbox => checkbox.checked).map(checkbox => parseInt(checkbox.value));
 
-    const selectedAdmin = document.querySelector('#adminSelect').value;
+    const selectedAdmin = document.querySelector('#adminSelect');
 
     try {  
         if(editGroupId) {
             const data = {
                 name: groupName,
                 membersIds: selectedMembers,
-                adminId: selectedAdmin,
+                adminId: selectedAdmin.value,
             }
 
             const res = await axios.put(host + `/group?groupId=${editGroupId}`, data);
