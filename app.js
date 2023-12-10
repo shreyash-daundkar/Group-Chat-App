@@ -31,7 +31,7 @@ const server = http.createServer(app);
 
 const io = require('socket.io')(server, {
     cors: {
-      origin: 'http://127.0.0.1:5500',
+      origin: `http://${process.env.HOST}`,
     }
 });
 
@@ -60,7 +60,7 @@ groupNamespace.on('connection', async socket => {
 
 
 
-app.use( cors({ origin: 'http://51.20.222.233' }) );
+app.use( cors({ origin: `http://${process.env.HOST}` }) );
 
 app.use(bodyParser.json());
 
