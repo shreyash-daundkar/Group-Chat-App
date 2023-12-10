@@ -36,6 +36,32 @@ exports.getLatestChats = async options => {
     }
 };
 
+
+exports.getChats = async options => {
+    try {
+        const { groupId } = options;
+        
+        const chats = await Chat.findAll({
+            include: [
+                {
+                    model: Group,
+                    where: { id: groupId },
+                },
+                {
+                    model: User,
+                    attributes: ['id', 'username'],
+                },
+            ],
+        });
+
+        return chats;
+    } catch (error) {
+        console.error(error.stack);
+        throw error;
+    }
+};
+
+
 exports.addChat = async options => {
     try {
         const { message, imageUrl, groupId, userId } = options;
@@ -49,3 +75,18 @@ exports.addChat = async options => {
         throw error;
     }
 }
+
+
+exports.deleteChats = async options => {
+    try {
+        const { chat: { id } } = options;
+        
+        const chat = await Chat.findByPk(id);
+
+        chat.distroy();
+        
+    } catch (error) {
+        console.error(error.stack);
+        throw error;
+    }
+};
