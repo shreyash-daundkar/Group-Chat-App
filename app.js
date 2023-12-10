@@ -10,12 +10,15 @@ const database = require('./utils/database');
 
 const User = require('./models/user');
 const Chat = require('./models/chat');
-const  Group = require('./models/group');
-const  GroupMember = require('./models/groupMember');
+const Group = require('./models/group');
+const GroupMember = require('./models/groupMember');
+const ArchivedChat = require('./models/archivedChat.js');
 
 const { userAuth, socketUserAuth, groupMemberAuth, socketGroupMemberAuth } = require('./middlewares/authentication.js');
 
 const { addChat } = require('./controllers/chat.js');
+
+const  { cronJob } = require('./services/cron.js');
 
 const userRoutes = require('./routes/user');
 const chatRoutes = require('./routes/chat');
@@ -64,6 +67,8 @@ app.use( cors({ origin: `http://${process.env.HOST}` }) );
 
 app.use(bodyParser.json());
 
+cronJob.start();
+
 
 app.use('/user', userRoutes);
 
@@ -91,6 +96,9 @@ app.use((error, req, res, next) => {
 User.hasMany(Chat);
 Chat.belongsTo(User);
 
+User.hasMany(ArchivedChat);
+ArchivedChat.belongsTo(User);
+
 User.belongsToMany(Group, { through: GroupMember });
 Group.belongsToMany(User, { through: GroupMember });
 
@@ -99,6 +107,9 @@ GroupMember.belongsTo(User , {constraints : true, onDelete : 'CASCADE'});
 
 Group.hasMany(Chat);
 Chat.belongsTo(Group);
+
+Group.hasMany(ArchivedChat);
+ArchivedChat.belongsTo(Group);
 
 
 
