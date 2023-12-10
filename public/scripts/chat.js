@@ -1,4 +1,6 @@
-const host  = new URL(window.location.origin);
+const { origin }  = new URL(window.location);
+
+const host = origin;
 
 
 
