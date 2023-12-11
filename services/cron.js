@@ -1,26 +1,15 @@
-const { CronJob } = require('cron').CronJob;
+const { CronJob } = require('cron');
 
-const { getChats, deleteChat } = require('../services/chat');
-const { saveToArchivedChat } = require('../services/archivedChat');
+const { movedOldChatToArichived } = require('../services/archivedChat');
 
-const job = new CronJob(
-  '0 0 * * *',
-  async function () {
-    try {
-        const chats = await getChats({ groupId });
 
-        await saveToArchivedChat({ chats });
+exports.cronJob = CronJob.from({
 
-        chats.forEach( chat => deleteChat({ chat }));
-        
-    } catch (error) {
-        console.error(error.stack);
-        throw error;
-    }
-  },
-  null,
-  true,
-  'Asia/Kolkata'
-);
+	cronTime: '0 0 * * * ',
 
-job.start();
+	onTick: movedOldChatToArichived,
+
+	start: true,
+
+	timeZone: 'Asia/Kolkata'
+});
