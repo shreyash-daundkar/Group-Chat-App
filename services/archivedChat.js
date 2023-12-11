@@ -2,6 +2,7 @@ const database = require('../utils/database');
 
 const ArchivedChat = require('../models/archivedChat');
 const Chat = require('../models/chat');
+const User = require('../models/user');
 
 
 
@@ -32,3 +33,23 @@ exports.movedOldChatToArichived = async () => {
     throw error;
   }
 }
+
+
+exports.getArchivedChats = async options => {
+    try {
+        const { groupId } = options;
+        
+        const chats = await ArchivedChat.findAll({
+            where: { groupId },
+            include: [{
+                model: User,
+                attributes: ['id', 'username'],
+            }],
+        });
+
+        return chats;
+    } catch (error) {
+        console.error(error.stack);
+        throw error;
+    }
+};
