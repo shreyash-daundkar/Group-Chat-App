@@ -9,6 +9,9 @@ const groupList = document.querySelector('#group-list');
 const sendChatBtn = document.querySelector('#send-chat-btn');
 const chatInput = document.querySelector('#chat-input');
 const imageInput = document.getElementById('image-input');
+const chatHeading = document.querySelector('#chat-heading');
+const newChatBtn = document.querySelector('#new-chat');
+const oldChatBtn = document.querySelector('#old-chat');
 
 
 
@@ -43,7 +46,7 @@ socket.on('error', data => {
 
 
 groupList.addEventListener('click', (e) => {
-    if(e.target.classList.contains('list-group-item')) loadChats(e);
+    if(e.target.classList.contains('list-group-item')) loadChats(e, 'new-chats');
     if(e.target.classList.contains('edit')) editGroup(e);
     if(e.target.classList.contains('delete')) deleteGroup(e);
 });
@@ -58,45 +61,67 @@ async function loadChats(e) {
     groupItems.forEach(item => item.classList.remove('active'));
 
     const selectedGroup = e.target;
+    chatHeading.textContent = selectedGroup.children[0].textContent;
     selectedGroup.classList.add('active');
 
     selectedGroupId = selectedGroup.getAttribute('groupid');
+
+    localStorage.setItem('new-chats', JSON.stringify([]));
+
+    oldChatBtn.style.display = 'inline-block';
+    newChatBtn.style.display = 'none';
+
+    const { data: { data }} = await axios.get(host+ `/chat?groupId=${selectedGroupId}`);
+    storeToLocalStorage(data, 'new-chats');
     
-    let lastMsgId = 0;
-
-    localStorage.setItem('chats', JSON.stringify([]));
-
-    //setInterval(async () => {
-
-        const { data: { data }} = await axios.get(host+ `/chat?groupId=${selectedGroupId}&lastMsgId=${lastMsgId}`);
-        storeToLocalStorage(data);
-
-        const chats = JSON.parse(localStorage.getItem('chats'));
-        if(chats.length !== 0) {
-            lastMsgId = chats[ chats.length - 1 ].id;
-        }
-
-        chatBox.innerHTML = '';
-        chats.forEach(chat => addChat(chat));
-
-    //}, 3000);
-
+    const chats = JSON.parse(localStorage.getItem('new-chats'));
+   
+    chatBox.innerHTML = '';
+    chats.forEach(chat => addChat(chat));
 
     socket.emit('join-chat-room', { groupId: selectedGroupId });
 }
 
-function storeToLocalStorage(data) {
-    const chats = JSON.parse(localStorage.getItem('chats'));
+
+oldChatBtn.addEventListener('click', async () => {
+
+    localStorage.setItem('old-chats', JSON.stringify([]));
+
+    oldChatBtn.style.display = 'none';
+    newChatBtn.style.display = 'inline-block';
+
+    const { data: { data }} = await axios.get(host+ `/archived-chat?groupId=${selectedGroupId}`);
+    storeToLocalStorage(data, 'old-chats');
+
+    const chats = JSON.parse(localStorage.getItem('old-chats'));
+   
+    chatBox.innerHTML = '';
+    chats.forEach(chat => addChat(chat));
+});
+
+
+newChatBtn.addEventListener('click', async () => {
+    
+    oldChatBtn.style.display = 'inline-block';
+    newChatBtn.style.display = 'none';
+
+    const chats = JSON.parse(localStorage.getItem('new-chats'));
+   
+    chatBox.innerHTML = '';
+    chats.forEach(chat => addChat(chat));
+})
+
+
+function storeToLocalStorage(data, timeframe) {
+    const chats = JSON.parse(localStorage.getItem(timeframe));
+
     while(data.length !== 0) {
-        if(chats.length >= 10) chats.shift();
-        //if(chats.length === 0 || data[0].id !== chats[chats.length - 1].id) {
-            chats.push(data.shift());
-        //} else {
-        //     data.shift();
-        // }
+        chats.push(data.shift());
     }
-    localStorage.setItem('chats', JSON.stringify(chats));
+
+    localStorage.setItem(timeframe, JSON.stringify(chats));
 }
+
 
 function addChat(chat) {
 
@@ -121,7 +146,6 @@ function addChat(chat) {
         img.src = imageUrl;
         img.classList.add('received-image');
         img.setAttribute('onclick', `window.open('${imageUrl}', '_blank')`);
-        //img.addEventListener('click', () => window.open(imageUrl, '_blank'));
         div.append(img);
     }
 
@@ -141,9 +165,9 @@ socket.on('received-chat', data => {
         const arr = [];
         arr.push(data.data)
     
-        storeToLocalStorage(arr);
+        storeToLocalStorage(arr, 'new-chats');
     
-        const chats = JSON.parse(localStorage.getItem('chats'));
+        const chats = JSON.parse(localStorage.getItem('new-chats'));
     
         chatBox.innerHTML = '';
         chats.forEach(chat => addChat(chat));
