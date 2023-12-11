@@ -1,13 +1,12 @@
-const { getLatestChats, addChat } = require('../services/chat');
+const { getChats, addChat } = require('../services/chat');
 const { storeInS3 } = require('../services/awsS3');
 
 
 exports.getChats = async (req, res, next) => {
     try {
         const groupId = parseInt(req.query.groupId);
-        const lastMsgId  = parseInt(req.query.lastMsgId);
 
-        let chats = await getLatestChats({ groupId, limit: 10, lastMsgId });
+        let chats = await getChats({ groupId });
         
         let chatsData = [];
         if(chats.length !== 0) {
