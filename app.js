@@ -24,6 +24,7 @@ const userRoutes = require('./routes/user');
 const chatRoutes = require('./routes/chat');
 const groupRouter = require('./routes/group');
 const groupMemberRouter =  require('./routes/groupMember');
+const archivedChatRouter = require('./routes/archivedChat.js');
 
 
 
@@ -72,11 +73,13 @@ cronJob.start();
 
 app.use('/user', userRoutes);
 
-app.use('/chat', userAuth, groupMemberAuth, chatRoutes);
-
 app.use('/group', userAuth, groupRouter);
 
+app.use('/chat', userAuth, groupMemberAuth, chatRoutes);
+
 app.use('/group-member', userAuth, groupMemberAuth, groupMemberRouter);
+
+app.use('/archived-chat', userAuth, groupMemberAuth, archivedChatRouter);
 
 
 app.use('/', (req, res, next) => {
