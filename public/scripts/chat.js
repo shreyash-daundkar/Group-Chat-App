@@ -125,7 +125,7 @@ function storeToLocalStorage(data, timeframe) {
 
 function addChat(chat) {
 
-    let { username , message, imageUrl, userId} = chat;
+    let { username , message, imageUrl, userId, date, time} = chat;
     const div = document.createElement('div');
     div.classList.add('message');
     if(userId === parseInt(localStorage.getItem('userId'))) {
@@ -138,7 +138,7 @@ function addChat(chat) {
     div.innerHTML = `<p><strong>${username}:</strong>`;
 
     if (message) {
-        div.innerHTML += `<span>${message}</span>`
+        div.innerHTML += `<span id="msg">${message}</span>`
     }
 
     if (imageUrl) {
@@ -149,7 +149,7 @@ function addChat(chat) {
         div.append(img);
     }
 
-    div.innerHTML += `</p><br>`;
+    div.innerHTML += `<p id="date-time">${date}, ${time}</p></p><br>`;
 
     chatBox.append(div);   
 }

@@ -48,16 +48,12 @@
       overflow-y: auto;
       border-bottom: 1px solid #ced4da;
     }
-
-    .message {
-      margin-bottom: 10px;
-    }
-
+    
     .message p {
       margin: 5px 0;
     }
 
-    .message img, .message span {
+    .message img, .message #msg {
       background-color: #54d071;
       color: white;
       border-radius: 18px;
@@ -68,15 +64,19 @@
       margin-left: 15px;
     }
 
-    /* .message strong {
-      margin-bottom: 15px;
-    } */
+    .message strong {
+      margin-bottom: 10px;
+    }
+
+    #date-time {
+      margin-left: 20px;
+    }
 
     .user1 {
       color: #007bff;
     }
     
-    .user1 img, .user1 span {
+    .user1 img, .user1 #msg {
       background-color: #398de6;
     }
 
@@ -167,6 +167,7 @@
             <strong>User1:</strong> 
             <span>Not bad. Just working on this chat app UI. What do you think?</span>
             <img src="https://group-chat-media-57.s3.amazonaws.com/Group-chat-media/1/2/2023-12-08T13%3A41%3A12.563Z.jpg" alt="Received Image" class="received-image" onclick="openImageInNewTab('https://group-chat-media-57.s3.amazonaws.com/Group-chat-media/1/2/2023-12-08T13%3A41%3A12.563Z.jpg')">
+            <p>Dec 10, 12:38</p>
           </p>
         </div>
         <div class="message user2">
