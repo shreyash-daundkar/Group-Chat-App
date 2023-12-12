@@ -12,6 +12,7 @@ const imageInput = document.getElementById('image-input');
 const chatHeading = document.querySelector('#chat-heading');
 const newChatBtn = document.querySelector('#new-chat');
 const oldChatBtn = document.querySelector('#old-chat');
+const logoutBtn = document.querySelector('#logout-btn');
 
 
 
@@ -32,6 +33,11 @@ if (token) {
 } else {
     window.location.href = 'login.html';
 }
+
+logoutBtn.addEventListener('click', () => {
+    document.cookie = `token=null`;
+    window.location.href = 'login.html';
+});
 
 
 
