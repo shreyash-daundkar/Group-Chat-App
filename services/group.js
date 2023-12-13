@@ -87,17 +87,18 @@ exports.editGroup = async options => {
 
         const existingMembers = await getGroupMembers({ groupId });
 
-        existingMembers.forEach(async (member) => {
-
+        await Promise.all(existingMembers.map(async (member) => {
             if (!membersIds.includes(member.id)) {
-              await member.destroy({ transaction : t});
+              await member.destroy({ transaction: t });
             }
-          });
+          }));
           
         const existingMembersIds = existingMembers.map(member => member.id);
         const membersToAdd = membersIds.filter(id => !existingMembersIds.includes(id));
 
-        await group.addUser(membersToAdd, { through: GroupMember, transaction: t });
+        await Promise.all(
+            membersToAdd.map((id) => group.addUser(id, { through: GroupMember, transaction: t }))
+        );
         
         await t.commit();
         return;

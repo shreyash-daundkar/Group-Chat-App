@@ -105,8 +105,8 @@ ArchivedChat.belongsTo(User);
 User.belongsToMany(Group, { through: GroupMember });
 Group.belongsToMany(User, { through: GroupMember });
 
-GroupMember.belongsTo(Group, {constraints : true, onDelete : 'CASCADE'});
-GroupMember.belongsTo(User , {constraints : true, onDelete : 'CASCADE'});
+GroupMember.belongsTo(Group);
+GroupMember.belongsTo(User);
 
 Group.hasMany(Chat);
 Chat.belongsTo(Group);
