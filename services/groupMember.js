@@ -23,3 +23,22 @@ exports.getGroupMembers = async options => {
         throw error;
     }
 }
+
+
+exports.deleteGroupMember = async options => {
+    try {
+        const { groupId, userId } = options;
+
+        const memeber = await GroupMember.destroy({
+            where: { 
+                groupId: groupId, 
+                userId: userId 
+            }
+        });
+
+        return;
+    } catch (error) {
+        console.error(error.stack);
+        throw error;
+    }
+}
