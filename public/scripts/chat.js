@@ -55,6 +55,7 @@ groupList.addEventListener('click', (e) => {
     if(e.target.classList.contains('list-group-item')) loadChats(e, 'new-chats');
     if(e.target.classList.contains('edit')) editGroup(e);
     if(e.target.classList.contains('delete')) deleteGroup(e);
+    if(e.target.classList.contains('leave')) leaveGroup(e);
 });
 
 //get chats
@@ -166,7 +167,6 @@ function openImageInNewTab(imageUrl) {
 
 
 socket.on('received-chat', data => {
-
     try {
         const arr = [];
         arr.push(data.data)
@@ -181,7 +181,6 @@ socket.on('received-chat', data => {
     } catch (error) {
         console.log(error);
     }
-
 });
 
 
@@ -252,9 +251,10 @@ function addGroup(group) {
     li.classList.add('list-group-item');
     li.innerHTML = isAdmin
          ? `<span>${name}</span>
-         <button class="btn btn-sm float-right btn-danger ml-2 delete">X</button>
+         <button class="btn btn-sm float-right btn-danger ml-2 delete">Delete</button>
          <button class="btn btn-sm float-right btn-warning ml-2 edit">Edit</button>`
-         : `<span>${name}</span>`;
+         : `<span>${name}</span>
+            <button class="btn btn-sm float-right btn-danger ml-2 leave">Leave</button>`;
     li.setAttribute('groupId', id);
     groupList.append(li);
 }
@@ -376,7 +376,9 @@ document.getElementById('createGroupForm').addEventListener('submit', async func
                 adminId: selectedAdmin.value,
             }
 
-            const res = await axios.put(host + `/group?groupId=${editGroupId}`, data);
+            console.log(data, editGroupId)
+
+            const res = await axios.put(host + `/group?groupId=${editGroupId}`, data); 
             if (res.data.success) {
                 $('#createGroupModal').modal('hide');
                 loadGroups();
@@ -386,7 +388,7 @@ document.getElementById('createGroupForm').addEventListener('submit', async func
         } else {
             const data = {
                 name: groupName,
-                membersIds: selectedMembers
+                membersIds: selectedMembers 
             }
 
             const res = await axios.post(host + '/group', data);
@@ -412,5 +414,26 @@ async function deleteGroup(e) {
         
     } catch (error) {
         console.log(error)
+    }
+}
+
+
+// leave group
+
+async function leaveGroup(e) {
+    try {
+        const groupId = e.target.parentNode.getAttribute('groupId');
+
+        const { data: { success } } = await axios.delete(`${host}/group-member?groupId=${groupId}`);
+
+        if(success) {
+            loadGroups();
+            if(selectedGroupId === groupId) {
+                chatBox.innerHTML = '';
+                selectedGroupId = null; 
+            }
+        } 
+    } catch (error) {
+        console.log(error);
     }
 }
