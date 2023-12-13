@@ -1,12 +1,14 @@
 const express = require('express');
 
-const { getMembers } = require('../controllers/groupMember');
+const { getGroupMembers, deleteGroupMember } = require('../controllers/groupMember');
 
 
 const router = express.Router();
 
 
-router.get('/', getMembers);
+router.get('/', getGroupMembers);
+
+router.delete('/', deleteGroupMember);
 
 
 module.exports = router;
