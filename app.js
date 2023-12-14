@@ -18,7 +18,7 @@ const { userAuth, socketUserAuth, groupMemberAuth, socketGroupMemberAuth } = req
 
 const { addChat } = require('./controllers/chat.js');
 
-const  { cronJob } = require('./services/cron.js');
+const  { cronJob } = require('./utils/cron.js');
 
 const userRoutes = require('./routes/user');
 const chatRoutes = require('./routes/chat');
@@ -38,6 +38,8 @@ const io = require('socket.io')(server, {
       origin: `http://${process.env.HOST}`,
     }
 });
+
+
 
 
 const groupNamespace = io.of('/group');
@@ -64,11 +66,14 @@ groupNamespace.on('connection', async socket => {
 
 
 
+
 app.use( cors({ origin: `http://${process.env.HOST}` }) );
 
 app.use(bodyParser.json());
 
 cronJob.start();
+
+
 
 
 app.use('/user', userRoutes);
@@ -81,7 +86,6 @@ app.use('/group-member', userAuth, groupMemberAuth, groupMemberRouter);
 
 app.use('/archived-chat', userAuth, groupMemberAuth, archivedChatRouter);
 
-
 app.use('/', (req, res, next) => {
     res.sendFile(path.join(__dirname, `public${req.url}`));
 });
@@ -90,8 +94,6 @@ app.use((error, req, res, next) => {
     console.error(error.stack);
     res.status(500).json({ message: 'Something went wrong!', success: false });
 });
-
-
 
 
 
@@ -113,6 +115,7 @@ Chat.belongsTo(Group);
 
 Group.hasMany(ArchivedChat);
 ArchivedChat.belongsTo(Group);
+
 
 
 

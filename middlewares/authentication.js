@@ -1,4 +1,4 @@
-const { verifyToken } = require('../services/jwt');
+const { verifyToken } = require('../utils/jwt');
 const { getUsers } = require('../services/user');
 const { getGroupMembers } = require('../services/groupMember');
 const { getGroupById } = require('../services/group');

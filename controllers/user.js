@@ -1,6 +1,6 @@
 const { getUsers, addUser } = require("../services/user");
-const { hashPassword, comparePassword } = require("../services/bcrypt");
-const { signToken } = require('../services/jwt');
+const { hashPassword, comparePassword } = require("../utils/bcrypt");
+const { signToken } = require('../utils/jwt');
 
 exports.addUser = async (req, res, next) => {
     try {
