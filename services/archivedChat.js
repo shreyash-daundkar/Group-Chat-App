@@ -29,7 +29,6 @@ exports.movedOldChatToArichived = async () => {
   } catch (error) {
 
     await t.rollback();
-    console.error(error.stack);
     throw error;
   }
 }
@@ -49,7 +48,6 @@ exports.getArchivedChats = async options => {
 
         return chats;
     } catch (error) {
-        console.error(error.stack);
         throw error;
     }
 };

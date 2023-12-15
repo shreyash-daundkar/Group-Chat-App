@@ -15,7 +15,6 @@ exports.getGroupById = async options => {
         return group;
 
     } catch (error) {
-        console.error(error.stack);
         throw error;
     }
 }
@@ -38,7 +37,6 @@ exports.getGroups = async options => {
         return groups;
 
     } catch (error) {
-        console.error(error.stack);
         throw error;
     }
 }
@@ -63,8 +61,6 @@ exports.createGroup = async options => {
 
     } catch (error) {
         await t.rollback();
-
-        console.error(error.stack);
         throw error;
     }
 }
@@ -105,8 +101,6 @@ exports.editGroup = async options => {
 
     } catch (error) {
         await t.rollback();
-
-        console.error(error.stack);
         throw error;
     }
 }
@@ -121,7 +115,6 @@ exports.deleteGroup = async options => {
         await group.destroy();
 
     } catch (error) {
-        console.error(error.stack);
         throw error;
     }
 }

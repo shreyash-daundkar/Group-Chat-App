@@ -19,7 +19,6 @@ exports.getGroupMembers = async options => {
         
         return groupMembers;
     } catch (error) {
-        console.error(error.stack);
         throw error;
     }
 }
@@ -38,7 +37,6 @@ exports.deleteGroupMember = async options => {
 
         return;
     } catch (error) {
-        console.error(error.stack);
         throw error;
     }
 }

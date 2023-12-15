@@ -16,8 +16,7 @@ exports.getUsers = async options => {
         return users;
 
     } catch (error) {
-        console.error(error.stack);
-        throw new Error('Error getting users');
+        throw error;
     }
 }
 
@@ -29,7 +28,6 @@ exports.addUser = async options => {
 
         return;
     } catch (error) {
-        console.error(error.stack);
-        throw new Error('Error creating user');
+        throw error
     }
 }

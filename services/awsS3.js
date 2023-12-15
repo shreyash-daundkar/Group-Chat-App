@@ -24,7 +24,6 @@ exports.storeInS3 = (fileName, fileData) => {
             });
         });
     } catch (error) {
-        console.log(error);
         throw error;
     }
 }

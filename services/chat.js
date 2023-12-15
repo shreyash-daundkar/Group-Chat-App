@@ -16,7 +16,6 @@ exports.getChats = async options => {
 
         return chats;
     } catch (error) {
-        console.error(error.stack);
         throw error;
     }
 };
@@ -31,7 +30,6 @@ exports.addChat = async options => {
         return res;
 
     } catch (error) {
-        console.error(error.stack);
         throw error;
     }
 }
