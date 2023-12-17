@@ -13,6 +13,7 @@ const Chat = require('./models/chat');
 const Group = require('./models/group');
 const GroupMember = require('./models/groupMember');
 const ArchivedChat = require('./models/archivedChat.js');
+const ForgotPassword = require('./models/forgotPassword.js');
 
 const { userAuth, socketUserAuth, groupMemberAuth, socketGroupMemberAuth } = require('./middlewares/authentication.js');
 
@@ -115,6 +116,9 @@ Chat.belongsTo(Group);
 
 Group.hasMany(ArchivedChat);
 ArchivedChat.belongsTo(Group);
+
+User.hasMany(ForgotPassword);
+ForgotPassword.belongsTo(User);
 
 
 

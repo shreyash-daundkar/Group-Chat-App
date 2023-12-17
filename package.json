@@ -29,7 +29,8 @@
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.6.5",
     "sequelize": "^6.35.1",
-    "socket.io": "^4.7.2"
+    "socket.io": "^4.7.2",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
