@@ -4,7 +4,7 @@ const ForgotPassword = require('../models/forgotPassword');
 
 
 
-exports.activeForgotPassword = async options => {
+exports.activateForgotPassword = async options => {
     try {
         const { userId } = options;
 
@@ -22,7 +22,7 @@ exports.activeForgotPassword = async options => {
 }
 
 
-exports.deactiveForgotPassword = async options => {
+exports.deactivateForgotPassword = async options => {
     try {
         const { id } = options;
 
@@ -33,7 +33,6 @@ exports.deactiveForgotPassword = async options => {
         forgotPassword.save();
 
         return;
-
     } catch (error) {
         throw error
     }
