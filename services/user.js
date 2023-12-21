@@ -24,9 +24,26 @@ exports.getUsers = async options => {
 exports.addUser = async options => {
     try {
         const { user } =  options;
-        User.create(user);
+        await User.create(user);
 
         return;
+    } catch (error) {
+        throw error
+    }
+}
+
+
+exports.updatePassword = async options => {
+    try {
+        const { userId, password } =  options;
+        
+        const user = await User.findByPk(userId);
+
+        user.password = password;
+
+        await user.save();
+        return;
+
     } catch (error) {
         throw error
     }
