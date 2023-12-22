@@ -1,6 +1,8 @@
 const { activateForgotPassword, deactivateForgotPassword  } = require('../services/forgotPassword');
-const { getUsers } = require('../services/user');
+const { getUsers, updatePassword } = require('../services/user');
 const { sendMail } = require('../services/sib');
+
+const { hashPassword } = require('../utils/bcrypt');
 
 
 exports.sendMail = async (req, res, next) => {
@@ -24,5 +26,30 @@ exports.sendMail = async (req, res, next) => {
         
     } catch (error) {
         next(error);
+    }
+}
+
+
+exports.resetPassword = async (req, res, next) => {
+    try {
+        const { password, forgotPasswordId } = req.body;
+        
+        const userId = await deactivateForgotPassword({ forgotPasswordId });
+        
+        if(!userId) {
+            return res.status(404).json({ 
+                message: 'Forgot password request is not activated', 
+                success: true
+            });
+        }
+
+        password = await hashPassword(password);
+
+        await updatePassword({ userId, password });
+    
+        res.status(200).json({ success: true });
+
+    } catch (error) {
+        next(error)
     }
 }
