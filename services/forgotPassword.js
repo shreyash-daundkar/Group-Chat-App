@@ -24,15 +24,18 @@ exports.activateForgotPassword = async options => {
 
 exports.deactivateForgotPassword = async options => {
     try {
-        const { id } = options;
+        const { forgotPasswordId } = options;
 
-        const forgotPassword = await ForgotPassword.findByPk(id);
+        const forgotPassword = await ForgotPassword.findByPk(forgotPasswordId);
         
+        if(!forgotPassword.isActive) return null;
+
         forgotPassword.isActive = false;
 
         forgotPassword.save();
 
-        return;
+        return forgotPassword.userId;
+        
     } catch (error) {
         throw error
     }
