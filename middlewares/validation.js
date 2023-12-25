@@ -44,6 +44,21 @@ exports.passwordValidation = (req, res, next) => {
     }
 }
 
+exports.emailValidation = (req, res, next) => {
+    try {
+        const { email } = req.body;
+        
+        let error = emailValidation(email);
+        if (error) {
+            return res.status(400).json({ message: error, success: false });
+        }
+        
+        next();
+    } catch (error) {
+        next(error);
+    }
+}
+
 
 function usernameValidation(username) {
     return username ? null : 'Username is required';
