@@ -39,7 +39,7 @@ exports.resetPassword = async (req, res, next) => {
         if(!userId) {
             return res.status(404).json({ 
                 message: 'Forgot password request is not activated', 
-                success: true
+                success: false,
             });
         }
 

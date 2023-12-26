@@ -26,6 +26,7 @@ const chatRoutes = require('./routes/chat');
 const groupRouter = require('./routes/group');
 const groupMemberRouter =  require('./routes/groupMember');
 const archivedChatRouter = require('./routes/archivedChat.js');
+const forgotPasswordRouter = require('./routes/forgotPassword.js');
 
 
 
@@ -80,6 +81,8 @@ cronJob.start();
 app.use('/user', userRoutes);
 
 app.use('/group', userAuth, groupRouter);
+
+app.use('forgot-password', forgotPasswordRouter);
 
 app.use('/chat', userAuth, groupMemberAuth, chatRoutes);
 
