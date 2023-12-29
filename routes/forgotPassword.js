@@ -10,9 +10,9 @@ const router = express.Router();
 
 
 
-router.post('/sendMail', emailValidation, sendMail);
+router.post('/send-mail', emailValidation, sendMail);
 
-router.post('/resetPassword', passwordValidation, resetPassword);
+router.post('/reset-password', passwordValidation, resetPassword);
 
 
 

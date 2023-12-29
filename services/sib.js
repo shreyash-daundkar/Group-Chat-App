@@ -23,7 +23,7 @@ exports.sendMail = async options => {
             sender,
             to: receivers,
             subject: 'Forget Password',
-            textContent: `http://${req.headers.host}/reset-password.html?id=${forgetPasswordId}`,
+            textContent: `http://${process.env.HOST}/reset-password.html?id=${forgetPasswordId}`,
         });  
 
         return;
