@@ -91,7 +91,8 @@ app.use('/group-member', userAuth, groupMemberAuth, groupMemberRouter);
 app.use('/archived-chat', userAuth, groupMemberAuth, archivedChatRouter);
 
 app.use('/', (req, res, next) => {
-    res.sendFile(path.join(__dirname, `public${req.url}`));
+    const url = new URL(req.url, `http://${req.headers.host}`);
+    res.sendFile(path.join(__dirname, `public${url.pathname}`));
 });
 
 app.use((error, req, res, next) => {
