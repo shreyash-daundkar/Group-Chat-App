@@ -82,7 +82,7 @@ app.use('/user', userRoutes);
 
 app.use('/group', userAuth, groupRouter);
 
-app.use('forgot-password', forgotPasswordRouter);
+app.use('/forgot-password', forgotPasswordRouter);
 
 app.use('/chat', userAuth, groupMemberAuth, chatRoutes);
 
