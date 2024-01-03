@@ -4,7 +4,7 @@ const Sib = require('sib-api-v3-sdk');
 
 exports.sendMail = async options => {
     try {
-        const { email, forgetPasswordId } = options; 
+        const { email, forgotPasswordId } = options; 
     
         const client = Sib.ApiClient.instance;
         const apiKey = client.authentications['api-key'];
@@ -23,8 +23,9 @@ exports.sendMail = async options => {
             sender,
             to: receivers,
             subject: 'Forget Password',
-            textContent: `http://${process.env.HOST}/reset-password.html?id=${forgetPasswordId}`,
+            textContent: `http://${process.env.HOST}:${process.env.PORT}/reset-password.html?id=${forgotPasswordId}`,
         });  
+
 
         return;
     } catch (error) {
