@@ -33,7 +33,7 @@ exports.sendMail = async (req, res, next) => {
 exports.resetPassword = async (req, res, next) => {
     try {
         const { password, forgotPasswordId } = req.body;
-        
+
         const userId = await deactivateForgotPassword({ forgotPasswordId });
         
         if(!userId) {
@@ -43,9 +43,9 @@ exports.resetPassword = async (req, res, next) => {
             });
         }
 
-        password = await hashPassword(password);
+        const hashedPassword = await hashPassword(password);
 
-        await updatePassword({ userId, password });
+        await updatePassword({ userId, password: hashedPassword });
     
         res.status(200).json({ success: true });
 
