@@ -22,7 +22,7 @@ async function resetPassword(e) {
     if(newPassword.value.length >= 8) {
         if(newPassword.value === confirmPassword.value) {
             try {
-                await axios.post(`http://${host}/forgot-password/reset-password?id=` + id, { newPassword: newPassword.value });
+                await axios.post(`http://${host}/forgot-password/reset-password`, { password: newPassword.value, forgotPasswordId: id });
                 window.location.href = 'login.html';
             } catch (error) {
                 console.log(error);
