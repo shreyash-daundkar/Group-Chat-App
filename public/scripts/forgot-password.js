@@ -21,6 +21,7 @@ async function sendEmail(e) {
     e.preventDefault();
     try {
         const res = await axios.post(`http://${host}/forgot-password/send-mail`, { email: email.value });
+        window.location.href = 'login.html';
     } catch (error) {
         console.log(error.message);
     }
